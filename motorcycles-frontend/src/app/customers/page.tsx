@@ -127,13 +127,23 @@ export default function CustomersPage() {
         </div>
       ),
     },
-    {
-      key: "documentNumber",
-      header: "Documento",
-      render: (customer: Customer) =>
-        customer.documentNumber
-          ? `${customer.documentType || ""} ${customer.documentNumber}`
-          : "-",
+    { 
+      key: "documentType", 
+      header: "Tipo Documento",
+      render: (customer: Customer) => {
+        const typeLabels = {
+          DNI: "DNI",
+          CEDULA: "Cédula",
+          PASSPORT: "Pasaporte", 
+          DRIVER_LICENSE: "Licencia"
+        };
+        return typeLabels[customer.documentType as keyof typeof typeLabels] || customer.documentType || "-";
+      }
+    },
+    { 
+      key: "documentNumber", 
+      header: "Número Documento",
+      render: (customer: Customer) => customer.documentNumber || "-"
     },
     {
       key: "city",

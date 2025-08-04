@@ -16,6 +16,7 @@ com\neexcorp\motorcycles\repository\CustomerRepository.class
 com\neexcorp\motorcycles\model\Motorcycle$MotorcycleType.class
 com\neexcorp\motorcycles\controller\SaleController.class
 com\neexcorp\motorcycles\model\Employee.class
+com\neexcorp\motorcycles\model\Employee$DocumentType.class
 com\neexcorp\motorcycles\service\CustomerService.class
 com\neexcorp\motorcycles\model\DetailSale.class
 com\neexcorp\motorcycles\service\MotorcycleService.class

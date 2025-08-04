@@ -57,18 +57,20 @@ export interface Employee {
   lastName: string;
   email: string;
   phone?: string;
-  jobTitle: string;
-  salary?: number;
-  hireDate: string;
-  status: "ACTIVE" | "INACTIVE" | "TERMINATED";
+  documentNumber?: string;
+  documentType?: "DNI" | "CEDULA" | "PASSPORT" | "DRIVER_LICENSE";
   address?: string;
   city?: string;
   state?: string;
   zipCode?: string;
   country?: string;
-  notes?: string;
+  jobTitle: string;
+  salary?: number;
+  hireDate?: string;
   terminationDate?: string;
-  position?: string; // Mantener por compatibilidad
+  status?: "ACTIVE" | "INACTIVE" | "TERMINATED";
+  notes?: string;
+  position?: string;
   createdAt?: string;
   updatedAt?: string;
 }

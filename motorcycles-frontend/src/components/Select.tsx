@@ -1,40 +1,67 @@
 "use client";
 
-import { SelectHTMLAttributes, forwardRef, ReactNode } from "react";
+import { SelectHTMLAttributes } from "react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+interface SelectOption {
+  value: string;
+  label: string;
+}
 
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
-  children: ReactNode;
+  helperText?: string;
+  options: SelectOption[];
+  placeholder?: string;
 }
 
-const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ label, error, className, children, ...props }, ref) => {
-    return (
-      <div className="space-y-1">
-        {label && (
-          <label className="block text-sm font-medium text-gray-700">
-            {label}
-          </label>
-        )}
+export default function Select({
+  label,
+  error,
+  helperText,
+  options,
+  placeholder,
+  className,
+  ...props
+}: SelectProps) {
+  return (
+    <div className="space-y-1">
+      {label && (
+        <label className="block text-sm font-medium text-gray-700">
+          {label}
+          {props.required && <span className="text-red-500 ml-1">*</span>}
+        </label>
+      )}
+      <div className="relative">
         <select
-          ref={ref}
           className={cn(
-            "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white",
-            error && "border-red-500 focus:ring-red-500",
+            "block w-full appearance-none rounded-lg border border-gray-300 px-3 py-2 pr-10 text-sm shadow-sm transition-colors",
+            "focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500",
+            "disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500",
+            error && "border-red-300 focus:border-red-500 focus:ring-red-500",
             className
           )}
           {...props}
         >
-          {children}
+          {placeholder && (
+            <option value="" disabled>
+              {placeholder}
+            </option>
+          )}
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        <ChevronDown className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
       </div>
-    );
-  }
-);
-
-Select.displayName = "Select";
-
-export default Select;
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      {helperText && !error && (
+        <p className="text-sm text-gray-500">{helperText}</p>
+      )}
+    </div>
+  );
+}

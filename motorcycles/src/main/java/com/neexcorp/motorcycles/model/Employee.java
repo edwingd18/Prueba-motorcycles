@@ -27,6 +27,13 @@ public class Employee {
     private String email;
 
     private String phone;
+
+    @Column(unique = true)
+    private String documentNumber; // DNI, Cedula, etc.
+
+    @Enumerated(EnumType.STRING)
+    private DocumentType documentType;
+
     private String address;
     private String city;
     private String state;
@@ -57,6 +64,15 @@ public class Employee {
 
     public enum EmployeeStatus {
         ACTIVE, INACTIVE, TERMINATED
+    }
+
+    public enum DocumentType {
+        DNI, CEDULA, PASSPORT, DRIVER_LICENSE
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 
     public String getFullName() {

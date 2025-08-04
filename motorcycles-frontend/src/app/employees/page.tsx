@@ -137,6 +137,24 @@ export default function EmployeesPage() {
       render: (employee: Employee) => employee.phone || "-"
     },
     { 
+      key: "documentType", 
+      header: "Tipo Documento",
+      render: (employee: Employee) => {
+        const typeLabels = {
+          DNI: "DNI",
+          CEDULA: "Cédula",
+          PASSPORT: "Pasaporte", 
+          DRIVER_LICENSE: "Licencia"
+        };
+        return typeLabels[employee.documentType as keyof typeof typeLabels] || employee.documentType || "-";
+      }
+    },
+    { 
+      key: "documentNumber", 
+      header: "Número Documento",
+      render: (employee: Employee) => employee.documentNumber || "-"
+    },
+    { 
       key: "status", 
       header: "Estado",
       render: (employee: Employee) => getStatusBadge(employee.status)

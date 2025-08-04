@@ -26,9 +26,9 @@ export default function MotorcycleForm({
     description: "",
     brand: "",
     model: "",
-    year: new Date().getFullYear(),
-    engine_capacity: 0,
-    price: 0,
+    year: "",
+    engine_capacity: "",
+    price: "",
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -36,14 +36,14 @@ export default function MotorcycleForm({
   useEffect(() => {
     if (motorcycle) {
       setFormData({
-        code: motorcycle.code,
-        name: motorcycle.name,
-        description: motorcycle.description,
-        brand: motorcycle.brand,
-        model: motorcycle.model,
-        year: motorcycle.year,
-        engine_capacity: motorcycle.engine_capacity,
-        price: motorcycle.price,
+        code: motorcycle.code || "",
+        name: motorcycle.name || "",
+        description: motorcycle.description || "",
+        brand: motorcycle.brand || "",
+        model: motorcycle.model || "",
+        year: motorcycle.year?.toString() || "",
+        engine_capacity: motorcycle.engine_capacity?.toString() || "",
+        price: motorcycle.price?.toString() || "",
       });
     } else {
       setFormData({
@@ -52,9 +52,9 @@ export default function MotorcycleForm({
         description: "",
         brand: "",
         model: "",
-        year: new Date().getFullYear(),
-        engine_capacity: 0,
-        price: 0,
+        year: "",
+        engine_capacity: "",
+        price: "",
       });
     }
     setErrors({});
@@ -65,48 +65,40 @@ export default function MotorcycleForm({
 
     if (!formData.code.trim()) {
       newErrors.code = "El código es requerido";
-    } else if (formData.code.length < 3) {
-      newErrors.code = "El código debe tener al menos 3 caracteres";
     }
-
     if (!formData.name.trim()) {
       newErrors.name = "El nombre es requerido";
-    } else if (formData.name.length < 3) {
-      newErrors.name = "El nombre debe tener al menos 3 caracteres";
     }
-
-    if (!formData.description.trim()) {
-      newErrors.description = "La descripción es requerida";
-    } else if (formData.description.length < 10) {
-      newErrors.description = "La descripción debe tener al menos 10 caracteres";
-    }
-
     if (!formData.brand.trim()) {
       newErrors.brand = "La marca es requerida";
-    } else if (formData.brand.length < 2) {
-      newErrors.brand = "La marca debe tener al menos 2 caracteres";
     }
-
     if (!formData.model.trim()) {
       newErrors.model = "El modelo es requerido";
-    } else if (formData.model.length < 2) {
-      newErrors.model = "El modelo debe tener al menos 2 caracteres";
     }
-
-    if (formData.year < 1900 || formData.year > new Date().getFullYear() + 1) {
-      newErrors.year = `Año debe estar entre 1900 y ${new Date().getFullYear() + 1}`;
+    if (!formData.year.trim()) {
+      newErrors.year = "El año es requerido";
+    } else {
+      const year = parseInt(formData.year);
+      const currentYear = new Date().getFullYear();
+      if (isNaN(year) || year < 1900 || year > currentYear + 1) {
+        newErrors.year = `El año debe estar entre 1900 y ${currentYear + 1}`;
+      }
     }
-
-    if (formData.engine_capacity <= 0) {
-      newErrors.engine_capacity = "La cilindrada debe ser mayor a 0";
-    } else if (formData.engine_capacity > 3000) {
-      newErrors.engine_capacity = "La cilindrada no puede exceder 3000cc";
+    if (!formData.engine_capacity.trim()) {
+      newErrors.engine_capacity = "La cilindrada es requerida";
+    } else {
+      const capacity = parseInt(formData.engine_capacity);
+      if (isNaN(capacity) || capacity <= 0) {
+        newErrors.engine_capacity = "La cilindrada debe ser un número positivo";
+      }
     }
-
-    if (formData.price <= 0) {
-      newErrors.price = "El precio debe ser mayor a 0";
-    } else if (formData.price > 1000000) {
-      newErrors.price = "El precio no puede exceder €1,000,000";
+    if (!formData.price.trim()) {
+      newErrors.price = "El precio es requerido";
+    } else {
+      const price = parseFloat(formData.price);
+      if (isNaN(price) || price <= 0) {
+        newErrors.price = "El precio debe ser un número positivo";
+      }
     }
 
     setErrors(newErrors);
@@ -120,21 +112,34 @@ export default function MotorcycleForm({
 
     setLoading(true);
     try {
+      // Convertir strings a números donde sea necesario
+      const dataToSend = {
+        code: formData.code,
+        name: formData.name,
+        description: formData.description,
+        brand: formData.brand,
+        model: formData.model,
+        year: parseInt(formData.year),
+        engine_capacity: parseInt(formData.engine_capacity),
+        price: parseFloat(formData.price),
+      };
+
       if (motorcycle) {
-        await motorcyclesApi.update(motorcycle.id, formData);
+        await motorcyclesApi.update(motorcycle.id, dataToSend);
       } else {
-        await motorcyclesApi.create(formData);
+        await motorcyclesApi.create(dataToSend);
       }
       onSuccess();
       onClose();
     } catch (error) {
       console.error("Error saving motorcycle:", error);
+      // Aquí podrías mostrar un mensaje de error al usuario
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (field: string, value: string | number) => {
+  const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -146,122 +151,119 @@ export default function MotorcycleForm({
       isOpen={isOpen}
       onClose={onClose}
       title={motorcycle ? "Editar Motocicleta" : "Nueva Motocicleta"}
-      size="lg"
+      className="max-w-2xl"
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            label="Código"
-            value={formData.code}
-            onChange={(e) => handleChange("code", e.target.value)}
-            error={errors.code}
-            placeholder="Ej: KAW001, HON002"
-            required
-          />
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Información Básica */}
+        <div className="border-b border-gray-200 pb-4">
+          <h4 className="text-sm font-medium text-gray-900 mb-3">
+            Información Básica
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label="Código"
+              value={formData.code}
+              onChange={(e) => handleChange("code", e.target.value)}
+              error={errors.code}
+              placeholder="Ej: KAW001"
+              required
+            />
 
-          <Input
-            label="Nombre"
-            value={formData.name}
-            onChange={(e) => handleChange("name", e.target.value)}
-            error={errors.name}
-            placeholder="Ej: Ninja 300, CB190R"
-            required
-          />
+            <Input
+              label="Nombre"
+              value={formData.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+              error={errors.name}
+              placeholder="Ej: Ninja 300"
+              required
+            />
+          </div>
+
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Descripción
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => handleChange("description", e.target.value)}
+              rows={3}
+              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 shadow-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="Descripción de la motocicleta..."
+            />
+          </div>
         </div>
 
+        {/* Especificaciones */}
+        <div className="border-b border-gray-200 pb-4">
+          <h4 className="text-sm font-medium text-gray-900 mb-3">
+            Especificaciones
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label="Marca"
+              value={formData.brand}
+              onChange={(e) => handleChange("brand", e.target.value)}
+              error={errors.brand}
+              placeholder="Ej: Kawasaki"
+              required
+            />
+
+            <Input
+              label="Modelo"
+              value={formData.model}
+              onChange={(e) => handleChange("model", e.target.value)}
+              error={errors.model}
+              placeholder="Ej: Ninja"
+              required
+            />
+
+            <Input
+              label="Año"
+              type="number"
+              value={formData.year}
+              onChange={(e) => handleChange("year", e.target.value)}
+              error={errors.year}
+              placeholder="Ej: 2024"
+              min="1900"
+              max={new Date().getFullYear() + 1}
+              required
+            />
+
+            <Input
+              label="Cilindrada (cc)"
+              type="number"
+              value={formData.engine_capacity}
+              onChange={(e) => handleChange("engine_capacity", e.target.value)}
+              error={errors.engine_capacity}
+              placeholder="Ej: 300"
+              min="1"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Precio */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Descripción *
-          </label>
-          <textarea
-            value={formData.description}
-            onChange={(e) => handleChange("description", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 text-gray-900"
-            rows={3}
-            placeholder="Describe las características principales de la motocicleta..."
-            required
-          />
-          {errors.description && (
-            <p className="text-sm text-red-600 mt-1">{errors.description}</p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            label="Marca"
-            value={formData.brand}
-            onChange={(e) => handleChange("brand", e.target.value)}
-            error={errors.brand}
-            placeholder="Ej: Honda, Yamaha, Kawasaki"
-            required
-          />
-
-          <Input
-            label="Modelo"
-            value={formData.model}
-            onChange={(e) => handleChange("model", e.target.value)}
-            error={errors.model}
-            placeholder="Ej: CBR600RR, YZF-R1"
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Input
-            label="Año"
-            type="number"
-            value={formData.year}
-            onChange={(e) => handleChange("year", parseInt(e.target.value) || new Date().getFullYear())}
-            error={errors.year}
-            min="1900"
-            max={new Date().getFullYear() + 1}
-            placeholder={new Date().getFullYear().toString()}
-            required
-          />
-
-          <Input
-            label="Cilindrada (cc)"
-            type="number"
-            value={formData.engine_capacity}
-            onChange={(e) =>
-              handleChange("engine_capacity", parseInt(e.target.value) || 0)
-            }
-            error={errors.engine_capacity}
-            min="1"
-            max="3000"
-            placeholder="Ej: 600, 1000"
-            required
-          />
-
           <Input
             label="Precio (€)"
             type="number"
             step="0.01"
             value={formData.price}
-            onChange={(e) => handleChange("price", parseFloat(e.target.value) || 0)}
+            onChange={(e) => handleChange("price", e.target.value)}
             error={errors.price}
-            min="0.01"
-            max="1000000"
-            placeholder="Ej: 15000.00"
+            placeholder="Ej: 5999.99"
+            min="0"
             required
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 sm:justify-end pt-6 border-t border-gray-200 -mx-4 sm:-mx-6 px-4 sm:px-6 mt-8">
-          <Button 
-            type="button" 
-            variant="secondary" 
-            onClick={onClose}
-            className="order-2 sm:order-1"
-          >
+        {/* Botones */}
+        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+          <Button type="button" variant="secondary" onClick={onClose}>
             Cancelar
           </Button>
-          <Button 
-            type="submit" 
-            loading={loading}
-            className="order-1 sm:order-2"
-          >
-            {motorcycle ? "Actualizar" : "Crear"} Motocicleta
+          <Button type="submit" loading={loading}>
+            {motorcycle ? "Actualizar" : "Crear"}
           </Button>
         </div>
       </form>

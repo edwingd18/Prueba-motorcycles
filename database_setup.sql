@@ -36,6 +36,8 @@ CREATE TABLE employees (
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     phone VARCHAR(255),
+    document_number VARCHAR(255) UNIQUE,
+    document_type VARCHAR(20) CHECK (document_type IN ('DNI', 'CEDULA', 'PASSPORT', 'DRIVER_LICENSE')),
     address TEXT,
     city VARCHAR(255),
     state VARCHAR(255),
@@ -119,6 +121,7 @@ CREATE INDEX idx_motorcycles_type ON motorcycles(type);
 CREATE INDEX idx_motorcycles_available ON motorcycles(available);
 
 CREATE INDEX idx_employees_email ON employees(email);
+CREATE INDEX idx_employees_document ON employees(document_number);
 CREATE INDEX idx_employees_status ON employees(status);
 
 CREATE INDEX idx_customers_email ON customers(email);
@@ -138,11 +141,11 @@ CREATE INDEX idx_detail_sales_motorcycle ON detail_sales(motorcycle_id);
 -- ===================================
 
 -- Insertar empleados de ejemplo
-INSERT INTO employees (first_name, last_name, email, phone, address, city, state, country, job_title, salary, hire_date, status, notes) VALUES
-('Juan', 'Pérez', 'juan.perez@motorcycles.com', '555-0001', 'Calle 123 #45-67', 'Bogotá', 'Cundinamarca', 'Colombia', 'Vendedor Senior', 2500000.00, '2023-01-15', 'ACTIVE', 'Excelente vendedor con 5 años de experiencia'),
-('María', 'González', 'maria.gonzalez@motorcycles.com', '555-0002', 'Carrera 78 #12-34', 'Medellín', 'Antioquia', 'Colombia', 'Gerente de Ventas', 3500000.00, '2022-06-10', 'ACTIVE', 'Líder del equipo de ventas'),
-('Carlos', 'Rodríguez', 'carlos.rodriguez@motorcycles.com', '555-0003', 'Avenida 45 #23-56', 'Cali', 'Valle del Cauca', 'Colombia', 'Vendedor Junior', 2000000.00, '2023-03-20', 'ACTIVE', 'Nuevo en el equipo, muy prometedor'),
-('Ana', 'Morales', 'ana.morales@motorcycles.com', '555-0004', 'Calle 67 #89-12', 'Barranquilla', 'Atlántico', 'Colombia', 'Asesora Comercial', 2200000.00, '2023-05-10', 'ACTIVE', 'Especialista en motocicletas deportivas');
+INSERT INTO employees (first_name, last_name, email, phone, document_number, document_type, address, city, state, country, job_title, salary, hire_date, status, notes) VALUES
+('Juan', 'Pérez', 'juan.perez@motorcycles.com', '555-0001', '1234567890', 'CEDULA', 'Calle 123 #45-67', 'Bogotá', 'Cundinamarca', 'Colombia', 'Vendedor Senior', 2500000.00, '2023-01-15', 'ACTIVE', 'Excelente vendedor con 5 años de experiencia'),
+('María', 'González', 'maria.gonzalez@motorcycles.com', '555-0002', '0987654321', 'CEDULA', 'Carrera 78 #12-34', 'Medellín', 'Antioquia', 'Colombia', 'Gerente de Ventas', 3500000.00, '2022-06-10', 'ACTIVE', 'Líder del equipo de ventas'),
+('Carlos', 'Rodríguez', 'carlos.rodriguez@motorcycles.com', '555-0003', '1122334455', 'CEDULA', 'Avenida 45 #23-56', 'Cali', 'Valle del Cauca', 'Colombia', 'Vendedor Junior', 2000000.00, '2023-03-20', 'ACTIVE', 'Nuevo en el equipo, muy prometedor'),
+('Ana', 'Morales', 'ana.morales@motorcycles.com', '555-0004', '5544332211', 'CEDULA', 'Calle 67 #89-12', 'Barranquilla', 'Atlántico', 'Colombia', 'Asesora Comercial', 2200000.00, '2023-05-10', 'ACTIVE', 'Especialista en motocicletas deportivas');
 
 -- Insertar motocicletas de ejemplo
 INSERT INTO motorcycles (code, name, description, brand, price, type, model, year, color, stock, available) VALUES
