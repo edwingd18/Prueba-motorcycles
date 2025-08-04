@@ -137,7 +137,7 @@ export default function EmployeeForm({
     if (formData.phone && formData.phone.trim()) {
       if (!/^[\d\s\-\+\(\)]+$/.test(formData.phone.trim())) {
         newErrors.phone = "Formato de teléfono inválido";
-      } else if (formData.phone.replace(/\D/g, '').length < 7) {
+      } else if (formData.phone.replace(/\D/g, "").length < 7) {
         newErrors.phone = "El teléfono debe tener al menos 7 dígitos";
       }
     }
@@ -145,21 +145,24 @@ export default function EmployeeForm({
     // Validación de documento
     if (formData.documentNumber && formData.documentNumber.trim()) {
       const docNumber = formData.documentNumber.trim();
-      if (formData.documentType === 'CEDULA') {
+      if (formData.documentType === "CEDULA") {
         if (!/^\d{6,12}$/.test(docNumber)) {
-          newErrors.documentNumber = "La cédula debe tener entre 6 y 12 dígitos";
+          newErrors.documentNumber =
+            "La cédula debe tener entre 6 y 12 dígitos";
         }
-      } else if (formData.documentType === 'DNI') {
+      } else if (formData.documentType === "DNI") {
         if (!/^\d{7,9}$/.test(docNumber)) {
           newErrors.documentNumber = "El DNI debe tener entre 7 y 9 dígitos";
         }
-      } else if (formData.documentType === 'PASSPORT') {
+      } else if (formData.documentType === "PASSPORT") {
         if (!/^[A-Z0-9]{6,12}$/.test(docNumber.toUpperCase())) {
-          newErrors.documentNumber = "El pasaporte debe tener entre 6 y 12 caracteres alfanuméricos";
+          newErrors.documentNumber =
+            "El pasaporte debe tener entre 6 y 12 caracteres alfanuméricos";
         }
-      } else if (formData.documentType === 'DRIVER_LICENSE') {
+      } else if (formData.documentType === "DRIVER_LICENSE") {
         if (docNumber.length < 6 || docNumber.length > 15) {
-          newErrors.documentNumber = "La licencia debe tener entre 6 y 15 caracteres";
+          newErrors.documentNumber =
+            "La licencia debe tener entre 6 y 15 caracteres";
         }
       }
     }
@@ -175,7 +178,11 @@ export default function EmployeeForm({
     }
 
     // Validación de dirección
-    if (formData.address && formData.address.trim().length > 0 && formData.address.trim().length < 10) {
+    if (
+      formData.address &&
+      formData.address.trim().length > 0 &&
+      formData.address.trim().length < 10
+    ) {
       newErrors.address = "La dirección debe tener al menos 10 caracteres";
     }
 
@@ -205,29 +212,34 @@ export default function EmployeeForm({
       if (hireDate > today) {
         newErrors.hireDate = "La fecha de contratación no puede ser futura";
       } else if (hireDate < oneYearAgo) {
-        newErrors.hireDate = "La fecha de contratación no puede ser anterior a 50 años";
+        newErrors.hireDate =
+          "La fecha de contratación no puede ser anterior a 50 años";
       }
     }
 
     if (formData.terminationDate) {
       if (!formData.hireDate) {
-        newErrors.terminationDate = "Debe especificar una fecha de contratación primero";
+        newErrors.terminationDate =
+          "Debe especificar una fecha de contratación primero";
       } else {
         const hireDate = new Date(formData.hireDate);
         const terminationDate = new Date(formData.terminationDate);
         const today = new Date();
-        
+
         if (terminationDate < hireDate) {
-          newErrors.terminationDate = "La fecha de terminación debe ser posterior a la fecha de contratación";
+          newErrors.terminationDate =
+            "La fecha de terminación debe ser posterior a la fecha de contratación";
         } else if (terminationDate > today) {
-          newErrors.terminationDate = "La fecha de terminación no puede ser futura";
+          newErrors.terminationDate =
+            "La fecha de terminación no puede ser futura";
         }
       }
     }
 
     // Validación condicional: si el estado es TERMINATED, requiere fecha de terminación
-    if (formData.status === 'TERMINATED' && !formData.terminationDate) {
-      newErrors.terminationDate = "La fecha de terminación es requerida para empleados terminados";
+    if (formData.status === "TERMINATED" && !formData.terminationDate) {
+      newErrors.terminationDate =
+        "La fecha de terminación es requerida para empleados terminados";
     }
 
     // Validación de notas
@@ -371,13 +383,13 @@ export default function EmployeeForm({
             />
 
             <Input
-              label="Salario (€)"
+              label="Salario (COP)"
               type="number"
               step="0.01"
               value={formData.salary}
               onChange={(e) => handleChange("salary", e.target.value)}
               error={errors.salary}
-              placeholder="Ej: 2500.00"
+              placeholder="Ej: 2500000"
               min="0"
             />
 

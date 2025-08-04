@@ -74,11 +74,18 @@ public class SaleService {
 
         // Actualizar los detalles si se proporcionan
         if (saleDetails.getDetails() != null) {
-            // Limpiar detalles existentes
-            existingSale.getDetails().clear();
-            
+            // Limpiar detalles existentes de forma segura
+            if (existingSale.getDetails() != null) {
+                existingSale.getDetails().clear();
+            }
+
+            // Forzar la sincronización con la base de datos
+            saleRepository.saveAndFlush(existingSale);
+
             // Agregar nuevos detalles
             saleDetails.getDetails().forEach(detail -> {
+                // Crear un nuevo detalle para evitar problemas de persistencia
+                detail.setId(null); // Asegurar que es un nuevo detalle
                 detail.setSale(existingSale);
                 if (detail.getSubtotal() == null || detail.getSubtotal().doubleValue() == 0) {
                     detail.calculateSubtotal();

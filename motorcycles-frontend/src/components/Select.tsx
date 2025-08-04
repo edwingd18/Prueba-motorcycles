@@ -21,7 +21,7 @@ export default function Select({
   label,
   error,
   helperText,
-  options,
+  options = [],
   placeholder,
   className,
   ...props
@@ -50,11 +50,12 @@ export default function Select({
               {placeholder}
             </option>
           )}
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
+          {options &&
+            options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
         </select>
         <ChevronDown className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
       </div>

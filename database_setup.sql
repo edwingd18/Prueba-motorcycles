@@ -110,34 +110,10 @@ CREATE TABLE detail_sales (
     CONSTRAINT fk_detail_sales_motorcycle FOREIGN KEY (motorcycle_id) REFERENCES motorcycles(id)
 );
 
--- ===================================
--- 3. CREAR ÍNDICES PARA MEJORAR RENDIMIENTO
--- ===================================
 
--- Índices para búsquedas frecuentes
-CREATE INDEX idx_motorcycles_code ON motorcycles(code);
-CREATE INDEX idx_motorcycles_brand ON motorcycles(brand);
-CREATE INDEX idx_motorcycles_type ON motorcycles(type);
-CREATE INDEX idx_motorcycles_available ON motorcycles(available);
-
-CREATE INDEX idx_employees_email ON employees(email);
-CREATE INDEX idx_employees_document ON employees(document_number);
-CREATE INDEX idx_employees_status ON employees(status);
-
-CREATE INDEX idx_customers_email ON customers(email);
-CREATE INDEX idx_customers_document ON customers(document_number);
-CREATE INDEX idx_customers_status ON customers(status);
-
-CREATE INDEX idx_sales_number ON sales(sale_number);
-CREATE INDEX idx_sales_date ON sales(sale_date);
-CREATE INDEX idx_sales_customer ON sales(customer_id);
-CREATE INDEX idx_sales_employee ON sales(employee_id);
-
-CREATE INDEX idx_detail_sales_sale ON detail_sales(sale_id);
-CREATE INDEX idx_detail_sales_motorcycle ON detail_sales(motorcycle_id);
 
 -- ===================================
--- 4. INSERTAR DATOS DE EJEMPLO
+-- 3. INSERTAR DATOS DE EJEMPLO
 -- ===================================
 
 -- Insertar empleados de ejemplo

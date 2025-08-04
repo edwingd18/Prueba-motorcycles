@@ -44,6 +44,8 @@ public class EmployeeService {
         existingEmployee.setLastName(employeeDetails.getLastName());
         existingEmployee.setEmail(employeeDetails.getEmail());
         existingEmployee.setPhone(employeeDetails.getPhone());
+        existingEmployee.setDocumentNumber(employeeDetails.getDocumentNumber());
+        existingEmployee.setDocumentType(employeeDetails.getDocumentType());
         existingEmployee.setAddress(employeeDetails.getAddress());
         existingEmployee.setCity(employeeDetails.getCity());
         existingEmployee.setState(employeeDetails.getState());

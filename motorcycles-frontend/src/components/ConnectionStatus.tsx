@@ -7,6 +7,7 @@ import { motorcyclesApi } from "@/services/api";
 export default function ConnectionStatus() {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
   const [isChecking, setIsChecking] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const checkConnection = async () => {
     setIsChecking(true);
@@ -21,13 +22,14 @@ export default function ConnectionStatus() {
   };
 
   useEffect(() => {
+    setIsMounted(true);
     checkConnection();
     // Verificar conexión cada 30 segundos
     const interval = setInterval(checkConnection, 30000);
     return () => clearInterval(interval);
   }, []);
 
-  if (isConnected === null) {
+  if (!isMounted || isConnected === null) {
     return null; // No mostrar nada mientras se verifica inicialmente
   }
 

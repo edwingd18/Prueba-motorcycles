@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { Bike, Users, ShoppingCart, TrendingUp, UserCheck } from "lucide-react";
-import { motorcyclesApi, customersApi, salesApi, employeesApi } from "@/services/api";
+import {
+  motorcyclesApi,
+  customersApi,
+  salesApi,
+  employeesApi,
+} from "@/services/api";
 
 interface DashboardStats {
   totalMotorcycles: number;
@@ -25,12 +30,13 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [motorcyclesRes, customersRes, employeesRes, salesRes] = await Promise.all([
-          motorcyclesApi.getAll(),
-          customersApi.getAll(),
-          employeesApi.getAll(),
-          salesApi.getAll(),
-        ]);
+        const [motorcyclesRes, customersRes, employeesRes, salesRes] =
+          await Promise.all([
+            motorcyclesApi.getAll(),
+            customersApi.getAll(),
+            employeesApi.getAll(),
+            salesApi.getAll(),
+          ]);
 
         const motorcycles = Array.isArray(motorcyclesRes.data)
           ? motorcyclesRes.data
@@ -101,7 +107,11 @@ export default function Dashboard() {
     },
     {
       title: "Ingresos Totales",
-      value: `€${stats.totalRevenue.toLocaleString()}`,
+      value: `${stats.totalRevenue.toLocaleString("es-CO", {
+        style: "currency",
+        currency: "COP",
+        minimumFractionDigits: 0,
+      })}`,
       icon: TrendingUp,
       color: "bg-orange-500",
     },

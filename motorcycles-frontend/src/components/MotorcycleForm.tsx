@@ -245,13 +245,13 @@ export default function MotorcycleForm({
         {/* Precio */}
         <div>
           <Input
-            label="Precio (€)"
+            label="Precio (COP)"
             type="number"
             step="0.01"
             value={formData.price}
             onChange={(e) => handleChange("price", e.target.value)}
             error={errors.price}
-            placeholder="Ej: 5999.99"
+            placeholder="Ej: 15000000"
             min="0"
             required
           />

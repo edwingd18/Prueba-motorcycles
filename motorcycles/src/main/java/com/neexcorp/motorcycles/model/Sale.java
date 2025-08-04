@@ -41,7 +41,7 @@ public class Sale {
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
-    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
     private List<DetailSale> details;
 

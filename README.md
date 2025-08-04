@@ -20,7 +20,8 @@ Sistema completo para la gestión de ventas de motocicletas con backend en Sprin
 
 ```bash
 # Clonar el repositorio
-git clone <repository-url>
+git clone https://github.com/edwingd18/Prueba-motorcycles
+
 cd motorcycles
 
 # Ejecutar todos los servicios
@@ -220,6 +221,10 @@ http://localhost:8080/api
 }
 ```
 
+## MER
+
+![Imagen del MER](https://i.ibb.co/h1sd70wT/image.png)
+
 ## Consultas SQL de Análisis
 
 ### Acceso a la base de datos via Docker
@@ -271,7 +276,7 @@ SELECT
     SUM(ds.subtotal) as dinero_total
 FROM motorcycles m
 JOIN detail_sales ds ON ds.motorcycle_id = m.id
-GROUP BY m.id, m.name, m.brand
+GROUP BY m.id, m.name
 ORDER BY cantidad_productos DESC
 LIMIT 5;
 ```

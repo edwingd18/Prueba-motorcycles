@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { salesApi, customersApi, employeesApi, motorcyclesApi } from "@/services/api";
+import {
+  salesApi,
+  customersApi,
+  employeesApi,
+  motorcyclesApi,
+} from "@/services/api";
 import { Sale, Customer, Employee, Motorcycle } from "@/types";
 import Modal from "./Modal";
 import Input from "./Input";
@@ -35,15 +40,22 @@ export default function SaleModal({
     saleDate: new Date().toISOString().split("T")[0],
     status: "PENDING",
     total: 0,
-    paymentMethod: "CASH" as "CASH" | "CREDIT_CARD" | "DEBIT_CARD" | "BANK_TRANSFER" | "FINANCING",
+    paymentMethod: "CASH" as
+      | "CASH"
+      | "CREDIT_CARD"
+      | "DEBIT_CARD"
+      | "BANK_TRANSFER"
+      | "FINANCING",
   });
-  
-  const [details, setDetails] = useState<SaleDetailForm[]>([{
-    motorcycle: null,
-    quantity: 1,
-    discount: 0,
-  }]);
-  
+
+  const [details, setDetails] = useState<SaleDetailForm[]>([
+    {
+      motorcycle: null,
+      quantity: 1,
+      discount: 0,
+    },
+  ]);
+
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [motorcycles, setMotorcycles] = useState<Motorcycle[]>([]);
@@ -68,13 +80,15 @@ export default function SaleModal({
         total: sale.total,
         paymentMethod: sale.paymentMethod || "CASH",
       });
-      
+
       if (sale.details && sale.details.length > 0) {
-        setDetails(sale.details.map(detail => ({
-          motorcycle: detail.motorcycle,
-          quantity: detail.quantity,
-          discount: detail.discount || 0,
-        })));
+        setDetails(
+          sale.details.map((detail) => ({
+            motorcycle: detail.motorcycle,
+            quantity: detail.quantity,
+            discount: detail.discount || 0,
+          }))
+        );
       }
     } else {
       setFormData({
@@ -86,11 +100,13 @@ export default function SaleModal({
         total: 0,
         paymentMethod: "CASH",
       });
-      setDetails([{
-        motorcycle: null,
-        quantity: 1,
-        discount: 0,
-      }]);
+      setDetails([
+        {
+          motorcycle: null,
+          quantity: 1,
+          discount: 0,
+        },
+      ]);
     }
     setErrors({});
   }, [sale, isOpen]);
@@ -103,11 +119,17 @@ export default function SaleModal({
         employeesApi.getAll(),
         motorcyclesApi.getAll(),
       ]);
-      
-      const customersData = Array.isArray(customersRes.data) ? customersRes.data : (customersRes.data as any)?.data || [];
-      const employeesData = Array.isArray(employeesRes.data) ? employeesRes.data : (employeesRes.data as any)?.data || [];
-      const motorcyclesData = Array.isArray(motorcyclesRes.data) ? motorcyclesRes.data : (motorcyclesRes.data as any)?.data || [];
-      
+
+      const customersData = Array.isArray(customersRes.data)
+        ? customersRes.data
+        : (customersRes.data as any)?.data || [];
+      const employeesData = Array.isArray(employeesRes.data)
+        ? employeesRes.data
+        : (employeesRes.data as any)?.data || [];
+      const motorcyclesData = Array.isArray(motorcyclesRes.data)
+        ? motorcyclesRes.data
+        : (motorcyclesRes.data as any)?.data || [];
+
       setCustomers(customersData);
       setEmployees(employeesData);
       setMotorcycles(motorcyclesData);
@@ -121,7 +143,8 @@ export default function SaleModal({
   const calculateTotal = () => {
     return details.reduce((total, detail) => {
       if (detail.motorcycle) {
-        const subtotal = (detail.motorcycle.price * detail.quantity) - detail.discount;
+        const subtotal =
+          detail.motorcycle.price * detail.quantity - detail.discount;
         return total + subtotal;
       }
       return total;
@@ -130,7 +153,7 @@ export default function SaleModal({
 
   useEffect(() => {
     const total = calculateTotal();
-    setFormData(prev => ({ ...prev, total }));
+    setFormData((prev) => ({ ...prev, total }));
   }, [details]);
 
   const validateForm = () => {
@@ -140,7 +163,8 @@ export default function SaleModal({
     if (!formData.saleNumber.trim()) {
       newErrors.saleNumber = "El número de venta es requerido";
     } else if (formData.saleNumber.length < 3) {
-      newErrors.saleNumber = "El número de venta debe tener al menos 3 caracteres";
+      newErrors.saleNumber =
+        "El número de venta debe tener al menos 3 caracteres";
     }
 
     // Validación cliente
@@ -161,27 +185,36 @@ export default function SaleModal({
       const today = new Date();
       const maxDate = new Date();
       maxDate.setDate(today.getDate() + 30); // Máximo 30 días en el futuro
-      
+
       if (saleDate > maxDate) {
-        newErrors.saleDate = "La fecha no puede ser más de 30 días en el futuro";
+        newErrors.saleDate =
+          "La fecha no puede ser más de 30 días en el futuro";
       }
     }
 
     // Validación detalles
-    if (details.length === 0 || !details.some(d => d.motorcycle)) {
+    if (details.length === 0 || !details.some((d) => d.motorcycle)) {
       newErrors.details = "Agrega al menos un detalle de venta";
     } else {
       // Validar cada detalle
       details.forEach((detail, index) => {
         if (detail.motorcycle) {
           if (detail.quantity <= 0) {
-            newErrors[`detail_${index}_quantity`] = `Cantidad debe ser mayor a 0 en el detalle ${index + 1}`;
+            newErrors[
+              `detail_${index}_quantity`
+            ] = `Cantidad debe ser mayor a 0 en el detalle ${index + 1}`;
           }
           if (detail.discount < 0) {
-            newErrors[`detail_${index}_discount`] = `Descuento no puede ser negativo en el detalle ${index + 1}`;
+            newErrors[
+              `detail_${index}_discount`
+            ] = `Descuento no puede ser negativo en el detalle ${index + 1}`;
           }
           if (detail.discount >= detail.motorcycle.price * detail.quantity) {
-            newErrors[`detail_${index}_discount`] = `Descuento no puede ser mayor o igual al precio total en el detalle ${index + 1}`;
+            newErrors[
+              `detail_${index}_discount`
+            ] = `Descuento no puede ser mayor o igual al precio total en el detalle ${
+              index + 1
+            }`;
           }
         }
       });
@@ -205,13 +238,14 @@ export default function SaleModal({
     try {
       // Preparar los detalles de la venta
       const saleDetails = details
-        .filter(detail => detail.motorcycle !== null)
-        .map(detail => ({
+        .filter((detail) => detail.motorcycle !== null)
+        .map((detail) => ({
           motorcycle: detail.motorcycle!,
           quantity: detail.quantity,
           unitPrice: detail.motorcycle!.price,
           discount: detail.discount,
-          subtotal: (detail.motorcycle!.price * detail.quantity) - detail.discount,
+          subtotal:
+            detail.motorcycle!.price * detail.quantity - detail.discount,
         }));
 
       const saleData: any = {
@@ -243,11 +277,14 @@ export default function SaleModal({
   };
 
   const addDetail = () => {
-    setDetails([...details, {
-      motorcycle: null,
-      quantity: 1,
-      discount: 0,
-    }]);
+    setDetails([
+      ...details,
+      {
+        motorcycle: null,
+        quantity: 1,
+        discount: 0,
+      },
+    ]);
   };
 
   const removeDetail = (index: number) => {
@@ -256,7 +293,11 @@ export default function SaleModal({
     }
   };
 
-  const updateDetail = (index: number, field: keyof SaleDetailForm, value: any) => {
+  const updateDetail = (
+    index: number,
+    field: keyof SaleDetailForm,
+    value: any
+  ) => {
     const newDetails = [...details];
     newDetails[index] = { ...newDetails[index], [field]: value };
     setDetails(newDetails);
@@ -290,16 +331,20 @@ export default function SaleModal({
           <Input
             label="Número de Venta"
             value={formData.saleNumber}
-            onChange={(e) => setFormData(prev => ({ ...prev, saleNumber: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, saleNumber: e.target.value }))
+            }
             error={errors.saleNumber}
             placeholder="SALE-0001"
           />
-          
+
           <Input
             label="Fecha de Venta"
             type="date"
             value={formData.saleDate}
-            onChange={(e) => setFormData(prev => ({ ...prev, saleDate: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, saleDate: e.target.value }))
+            }
             error={errors.saleDate}
           />
         </div>
@@ -307,78 +352,101 @@ export default function SaleModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Select
             label="Cliente"
-            value={formData.customer?.id || ""}
+            value={formData.customer?.id?.toString() || ""}
             onChange={(e) => {
-              const customer = customers.find(c => c.id === parseInt(e.target.value)) || null;
-              setFormData(prev => ({ ...prev, customer }));
+              const customer =
+                customers.find((c) => c.id === parseInt(e.target.value)) ||
+                null;
+              setFormData((prev) => ({ ...prev, customer }));
             }}
             error={errors.customer}
-          >
-            <option value="">Selecciona un cliente</option>
-            {customers.map((customer) => (
-              <option key={customer.id} value={customer.id}>
-                {customer.firstName} {customer.lastName} - {customer.email}
-              </option>
-            ))}
-          </Select>
+            placeholder="Selecciona un cliente"
+            options={customers.map((customer) => ({
+              value: customer.id.toString(),
+              label: `${customer.firstName} ${customer.lastName} - ${customer.email}`,
+            }))}
+          />
 
           <Select
             label="Empleado"
-            value={formData.employee?.id || ""}
+            value={formData.employee?.id?.toString() || ""}
             onChange={(e) => {
-              const employee = employees.find(emp => emp.id === parseInt(e.target.value)) || null;
-              setFormData(prev => ({ ...prev, employee }));
+              const employee =
+                employees.find((emp) => emp.id === parseInt(e.target.value)) ||
+                null;
+              setFormData((prev) => ({ ...prev, employee }));
             }}
             error={errors.employee}
-          >
-            <option value="">Selecciona un empleado</option>
-            {employees.map((employee) => (
-              <option key={employee.id} value={employee.id}>
-                {employee.firstName} {employee.lastName} {employee.position && `(${employee.position})`}
-              </option>
-            ))}
-          </Select>
+            placeholder="Selecciona un empleado"
+            options={employees.map((employee) => ({
+              value: employee.id.toString(),
+              label: `${employee.firstName} ${employee.lastName}${
+                employee.position ? ` (${employee.position})` : ""
+              }`,
+            }))}
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Select
             label="Estado"
             value={formData.status}
-            onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
-          >
-            <option value="PENDING">Pendiente</option>
-            <option value="COMPLETED">Completada</option>
-            <option value="CANCELLED">Cancelada</option>
-          </Select>
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, status: e.target.value }))
+            }
+            options={[
+              { value: "PENDING", label: "Pendiente" },
+              { value: "COMPLETED", label: "Completada" },
+              { value: "CANCELLED", label: "Cancelada" },
+            ]}
+          />
 
           <Select
             label="Método de Pago"
             value={formData.paymentMethod}
-            onChange={(e) => setFormData(prev => ({ ...prev, paymentMethod: e.target.value as any }))}
-          >
-            <option value="CASH">Efectivo</option>
-            <option value="CREDIT_CARD">Tarjeta de Crédito</option>
-            <option value="DEBIT_CARD">Tarjeta de Débito</option>
-            <option value="BANK_TRANSFER">Transferencia Bancaria</option>
-            <option value="FINANCING">Financiamiento</option>
-          </Select>
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                paymentMethod: e.target.value as any,
+              }))
+            }
+            options={[
+              { value: "CASH", label: "Efectivo" },
+              { value: "CREDIT_CARD", label: "Tarjeta de Crédito" },
+              { value: "DEBIT_CARD", label: "Tarjeta de Débito" },
+              { value: "BANK_TRANSFER", label: "Transferencia Bancaria" },
+              { value: "FINANCING", label: "Financiamiento" },
+            ]}
+          />
         </div>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium">Detalles de la Venta</h3>
-            <Button type="button" variant="secondary" size="sm" onClick={addDetail}>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={addDetail}
+            >
               <Plus className="h-4 w-4 mr-1" />
               Agregar Detalle
             </Button>
           </div>
-          
-          {errors.details && <p className="text-sm text-red-600">{errors.details}</p>}
+
+          {errors.details && (
+            <p className="text-sm text-red-600">{errors.details}</p>
+          )}
 
           {details.map((detail, index) => (
-            <div key={index} className="p-4 border border-gray-200 rounded-lg space-y-3">
+            <div
+              key={index}
+              className="p-4 border border-gray-200 rounded-lg space-y-3"
+            >
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-medium text-gray-700">Detalle {index + 1}</h4>
+                <h4 className="text-sm font-medium text-gray-700">
+                  Detalle {index + 1}
+                </h4>
                 {details.length > 1 && (
                   <Button
                     type="button"
@@ -395,19 +463,26 @@ export default function SaleModal({
                 <div className="md:col-span-2">
                   <Select
                     label="Motocicleta"
-                    value={detail.motorcycle?.id || ""}
+                    value={detail.motorcycle?.id?.toString() || ""}
                     onChange={(e) => {
-                      const motorcycle = motorcycles.find(m => m.id === parseInt(e.target.value)) || null;
+                      const motorcycle =
+                        motorcycles.find(
+                          (m) => m.id === parseInt(e.target.value)
+                        ) || null;
                       updateDetail(index, "motorcycle", motorcycle);
                     }}
-                  >
-                    <option value="">Selecciona una motocicleta</option>
-                    {motorcycles.map((motorcycle) => (
-                      <option key={motorcycle.id} value={motorcycle.id}>
-                        {motorcycle.brand} {motorcycle.model} ({motorcycle.year}) - ${motorcycle.price}
-                      </option>
-                    ))}
-                  </Select>
+                    placeholder="Selecciona una motocicleta"
+                    options={motorcycles.map((motorcycle) => ({
+                      value: motorcycle.id.toString(),
+                      label: `${motorcycle.brand} ${motorcycle.model} (${
+                        motorcycle.year
+                      }) - ${motorcycle.price.toLocaleString("es-CO", {
+                        style: "currency",
+                        currency: "COP",
+                        minimumFractionDigits: 0,
+                      })}`,
+                    }))}
+                  />
                 </div>
 
                 <div>
@@ -417,7 +492,13 @@ export default function SaleModal({
                     min="1"
                     max="100"
                     value={detail.quantity}
-                    onChange={(e) => updateDetail(index, "quantity", parseInt(e.target.value) || 1)}
+                    onChange={(e) =>
+                      updateDetail(
+                        index,
+                        "quantity",
+                        parseInt(e.target.value) || 1
+                      )
+                    }
                     placeholder="Cantidad"
                     error={errors[`detail_${index}_quantity`]}
                     required
@@ -426,13 +507,27 @@ export default function SaleModal({
 
                 <div>
                   <Input
-                    label="Descuento ($)"
+                    label="Descuento (COP)"
                     type="number"
                     step="0.01"
                     min="0"
-                    max={detail.motorcycle ? (detail.motorcycle.price * detail.quantity * 0.99).toString() : undefined}
+                    max={
+                      detail.motorcycle
+                        ? (
+                            detail.motorcycle.price *
+                            detail.quantity *
+                            0.99
+                          ).toString()
+                        : undefined
+                    }
                     value={detail.discount}
-                    onChange={(e) => updateDetail(index, "discount", parseFloat(e.target.value) || 0)}
+                    onChange={(e) =>
+                      updateDetail(
+                        index,
+                        "discount",
+                        parseFloat(e.target.value) || 0
+                      )
+                    }
                     placeholder="0.00"
                     error={errors[`detail_${index}_discount`]}
                   />
@@ -441,20 +536,43 @@ export default function SaleModal({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Precio Unitario</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Precio Unitario
+                  </label>
                   <input
                     type="text"
-                    value={detail.motorcycle ? `$${detail.motorcycle.price.toFixed(2)}` : "-"}
+                    value={
+                      detail.motorcycle
+                        ? detail.motorcycle.price.toLocaleString("es-CO", {
+                            style: "currency",
+                            currency: "COP",
+                            minimumFractionDigits: 0,
+                          })
+                        : "-"
+                    }
                     disabled
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Subtotal</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Subtotal
+                  </label>
                   <input
                     type="text"
-                    value={detail.motorcycle ? `$${((detail.motorcycle.price * detail.quantity) - detail.discount).toFixed(2)}` : "-"}
+                    value={
+                      detail.motorcycle
+                        ? (
+                            detail.motorcycle.price * detail.quantity -
+                            detail.discount
+                          ).toLocaleString("es-CO", {
+                            style: "currency",
+                            currency: "COP",
+                            minimumFractionDigits: 0,
+                          })
+                        : "-"
+                    }
                     disabled
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
                   />
@@ -467,21 +585,27 @@ export default function SaleModal({
         <div className="bg-gray-50 p-4 rounded-lg">
           <div className="flex justify-between items-center">
             <span className="text-lg font-medium text-gray-700">Total:</span>
-            <span className="text-2xl font-bold text-green-600">${formData.total.toFixed(2)}</span>
+            <span className="text-2xl font-bold text-green-600">
+              {formData.total.toLocaleString("es-CO", {
+                style: "currency",
+                currency: "COP",
+                minimumFractionDigits: 0,
+              })}
+            </span>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 sm:justify-end pt-6 border-t border-gray-200 -mx-4 sm:-mx-6 px-4 sm:px-6 mt-8">
-          <Button 
-            type="button" 
-            variant="secondary" 
+          <Button
+            type="button"
+            variant="secondary"
             onClick={onClose}
             className="order-2 sm:order-1"
           >
             Cancelar
           </Button>
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             loading={loading}
             className="order-1 sm:order-2"
           >

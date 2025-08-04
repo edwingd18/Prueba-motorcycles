@@ -15,8 +15,12 @@ export default function EmployeesPage() {
   const [error, setError] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-  const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null
+  );
+  const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(
+    null
+  );
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   const fetchEmployees = async () => {
@@ -24,13 +28,13 @@ export default function EmployeesPage() {
       setLoading(true);
       const response = await employeesApi.getAll();
       // Handle different response structures
-      const employeesData = Array.isArray(response.data) 
-        ? response.data 
+      const employeesData = Array.isArray(response.data)
+        ? response.data
         : (response.data as any)?.data || [];
-      
+
       console.log("Employees data received:", employeesData);
       console.log("First employee:", employeesData[0]);
-      
+
       setEmployees(employeesData);
       setError(null);
     } catch (err) {
@@ -62,7 +66,7 @@ export default function EmployeesPage() {
 
   const handleDeleteConfirm = async () => {
     if (!employeeToDelete) return;
-    
+
     setDeleteLoading(true);
     try {
       await employeesApi.delete(employeeToDelete.id);
@@ -92,17 +96,18 @@ export default function EmployeesPage() {
       INACTIVE: "bg-yellow-100 text-yellow-800",
       TERMINATED: "bg-red-100 text-red-800",
     };
-    
+
     const statusLabels = {
       ACTIVE: "Activo",
-      INACTIVE: "Inactivo", 
+      INACTIVE: "Inactivo",
       TERMINATED: "Terminado",
     };
 
     return (
       <span
         className={`px-2 py-1 rounded-full text-xs font-medium ${
-          statusClasses[status as keyof typeof statusClasses] || "bg-gray-100 text-gray-800"
+          statusClasses[status as keyof typeof statusClasses] ||
+          "bg-gray-100 text-gray-800"
         }`}
       >
         {statusLabels[status as keyof typeof statusLabels] || status}
@@ -111,53 +116,69 @@ export default function EmployeesPage() {
   };
 
   const columns = [
-    { 
-      key: "firstName", 
+    {
+      key: "firstName",
       header: "Nombre",
-      render: (employee: Employee) => employee.firstName || "-"
+      render: (employee: Employee) => employee.firstName || "-",
     },
-    { 
-      key: "lastName", 
+    {
+      key: "lastName",
       header: "Apellido",
-      render: (employee: Employee) => employee.lastName || "-"
+      render: (employee: Employee) => employee.lastName || "-",
     },
-    { 
-      key: "email", 
+    {
+      key: "email",
       header: "Email",
-      render: (employee: Employee) => employee.email || "-"
+      render: (employee: Employee) => employee.email || "-",
     },
-    { 
-      key: "jobTitle", 
+    {
+      key: "jobTitle",
       header: "Cargo",
-      render: (employee: Employee) => employee.jobTitle || "-"
+      render: (employee: Employee) => employee.jobTitle || "-",
     },
-    { 
-      key: "phone", 
+    {
+      key: "phone",
       header: "Teléfono",
-      render: (employee: Employee) => employee.phone || "-"
+      render: (employee: Employee) => employee.phone || "-",
     },
-    { 
-      key: "documentType", 
+    {
+      key: "documentType",
       header: "Tipo Documento",
       render: (employee: Employee) => {
         const typeLabels = {
           DNI: "DNI",
           CEDULA: "Cédula",
-          PASSPORT: "Pasaporte", 
-          DRIVER_LICENSE: "Licencia"
+          PASSPORT: "Pasaporte",
+          DRIVER_LICENSE: "Licencia",
         };
-        return typeLabels[employee.documentType as keyof typeof typeLabels] || employee.documentType || "-";
-      }
+        return (
+          typeLabels[employee.documentType as keyof typeof typeLabels] ||
+          employee.documentType ||
+          "-"
+        );
+      },
     },
-    { 
-      key: "documentNumber", 
+    {
+      key: "documentNumber",
       header: "Número Documento",
-      render: (employee: Employee) => employee.documentNumber || "-"
+      render: (employee: Employee) => employee.documentNumber || "-",
     },
-    { 
-      key: "status", 
+    {
+      key: "salary",
+      header: "Salario",
+      render: (employee: Employee) =>
+        employee.salary
+          ? employee.salary.toLocaleString("es-CO", {
+              style: "currency",
+              currency: "COP",
+              minimumFractionDigits: 0,
+            })
+          : "-",
+    },
+    {
+      key: "status",
       header: "Estado",
-      render: (employee: Employee) => getStatusBadge(employee.status)
+      render: (employee: Employee) => getStatusBadge(employee.status),
     },
     {
       key: "actions",
@@ -229,9 +250,17 @@ export default function EmployeesPage() {
         onConfirm={handleDeleteConfirm}
         title="Eliminar Empleado"
         message="¿Estás seguro de que deseas eliminar este empleado?"
-        itemName={employeeToDelete ? `${employeeToDelete.firstName} ${employeeToDelete.lastName}` : ""}
+        itemName={
+          employeeToDelete
+            ? `${employeeToDelete.firstName} ${employeeToDelete.lastName}`
+            : ""
+        }
         loading={deleteLoading}
-        checkDependencies={employeeToDelete ? () => employeesApi.checkDependencies(employeeToDelete.id) : undefined}
+        checkDependencies={
+          employeeToDelete
+            ? () => employeesApi.checkDependencies(employeeToDelete.id)
+            : undefined
+        }
       />
     </div>
   );
