@@ -1,0 +1,105 @@
+# ===================================
+# DOCKER COMPOSE - APLICACIÓN COMPLETA
+# PostgreSQL + Spring Boot App
+# ===================================
+
+services:
+  # ===================================
+  # SERVICIO DE BASE DE DATOS POSTGRESQL
+  # ===================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: motorcycles-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: motocicletas
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_ROOT_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      # Montar script de inicialización
+      - ./database_setup.sql:/docker-entrypoint-initdb.d/01-init.sql
+      # Volumen persistente para datos
+      - postgres_data:/var/lib/postgresql/data
+      # Configuración personalizada de PostgreSQL
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+    networks:
+      - motorcycles-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d motocicletas"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===================================
+  # SERVICIO DE LA APLICACIÓN SPRING BOOT
+  # ===================================
+  server:
+    build: ./motorcycles
+    container_name: motorcycles-app
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      # Variables de entorno para la aplicación
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/motocicletas
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - motorcycles-network
+    volumes:
+      # Logs de la aplicación
+      - ./logs:/app/logs
+
+  # ===================================
+  # SERVICIO DE LA APLICACIÓN FRONTEND
+  # ===================================
+  client:
+    build: ./motorcycles-frontend
+    container_name: motorcycles-client
+    restart: always
+    ports:
+      - "3000:3000"
+  # ===================================
+  # SERVICIO OPCIONAL: PGADMIN
+  # Interfaz web para administrar PostgreSQL
+  # ===================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: motorcycles-pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@motorcycles.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - motorcycles-network
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+# ===================================
+# VOLÚMENES PERSISTENTES
+# ===================================
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+# ===================================
+# RED PERSONALIZADA
+# ===================================
+networks:
+  motorcycles-network:
+    driver: bridge

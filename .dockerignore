@@ -1,0 +1,41 @@
+# ===================================
+# ARCHIVOS A IGNORAR EN DOCKER BUILD
+# ===================================
+
+# Directorios de compilación
+target/
+!target/*.jar
+*.jar
+*.war
+
+# Archivos de IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentación
+README.md
+*.md

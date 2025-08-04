@@ -1,0 +1,64 @@
+{
+  "pages": {
+    "/_not-found/page": [
+      "static/chunks/webpack-640b3195e90f8f60.js",
+      "static/chunks/4bd1b696-cf72ae8a39fa05aa.js",
+      "static/chunks/964-02efbd2195ef91bd.js",
+      "static/chunks/main-app-241f92ad869bcb2d.js",
+      "static/chunks/app/_not-found/page-f70dc1e124c82c15.js"
+    ],
+    "/layout": [
+      "static/chunks/webpack-640b3195e90f8f60.js",
+      "static/chunks/4bd1b696-cf72ae8a39fa05aa.js",
+      "static/chunks/964-02efbd2195ef91bd.js",
+      "static/chunks/main-app-241f92ad869bcb2d.js",
+      "static/css/2840206d2a8b0d24.css",
+      "static/chunks/445-a270c29adcc484b7.js",
+      "static/chunks/app/layout-ac55a3cfeda40251.js"
+    ],
+    "/customers/page": [
+      "static/chunks/webpack-640b3195e90f8f60.js",
+      "static/chunks/4bd1b696-cf72ae8a39fa05aa.js",
+      "static/chunks/964-02efbd2195ef91bd.js",
+      "static/chunks/main-app-241f92ad869bcb2d.js",
+      "static/chunks/445-a270c29adcc484b7.js",
+      "static/chunks/139-ea4343fb34a54af8.js",
+      "static/chunks/app/customers/page-70cc13ecdb16dde5.js"
+    ],
+    "/motorcycles/page": [
+      "static/chunks/webpack-640b3195e90f8f60.js",
+      "static/chunks/4bd1b696-cf72ae8a39fa05aa.js",
+      "static/chunks/964-02efbd2195ef91bd.js",
+      "static/chunks/main-app-241f92ad869bcb2d.js",
+      "static/chunks/445-a270c29adcc484b7.js",
+      "static/chunks/139-ea4343fb34a54af8.js",
+      "static/chunks/app/motorcycles/page-5668464d72ffcc97.js"
+    ],
+    "/page": [
+      "static/chunks/webpack-640b3195e90f8f60.js",
+      "static/chunks/4bd1b696-cf72ae8a39fa05aa.js",
+      "static/chunks/964-02efbd2195ef91bd.js",
+      "static/chunks/main-app-241f92ad869bcb2d.js",
+      "static/chunks/445-a270c29adcc484b7.js",
+      "static/chunks/app/page-91708ccd00bb30c0.js"
+    ],
+    "/employees/page": [
+      "static/chunks/webpack-640b3195e90f8f60.js",
+      "static/chunks/4bd1b696-cf72ae8a39fa05aa.js",
+      "static/chunks/964-02efbd2195ef91bd.js",
+      "static/chunks/main-app-241f92ad869bcb2d.js",
+      "static/chunks/445-a270c29adcc484b7.js",
+      "static/chunks/139-ea4343fb34a54af8.js",
+      "static/chunks/app/employees/page-7a265bf58ae86852.js"
+    ],
+    "/sales/page": [
+      "static/chunks/webpack-640b3195e90f8f60.js",
+      "static/chunks/4bd1b696-cf72ae8a39fa05aa.js",
+      "static/chunks/964-02efbd2195ef91bd.js",
+      "static/chunks/main-app-241f92ad869bcb2d.js",
+      "static/chunks/445-a270c29adcc484b7.js",
+      "static/chunks/139-ea4343fb34a54af8.js",
+      "static/chunks/app/sales/page-bd90cc8c85bbf0d4.js"
+    ]
+  }
+}
